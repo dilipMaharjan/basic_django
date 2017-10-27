@@ -1,0 +1,3 @@
+*.vscode
+*pyc
+basic_django/__pycache*
