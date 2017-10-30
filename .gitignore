@@ -1,3 +1,6 @@
 *.vscode
 *pyc
 basic_django/__pycache*
+api/migrations*
+webapp/migrations*
+login_system/migrations*
