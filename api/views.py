@@ -1,20 +1,50 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-
-from rest_framework.views import APIView
+from rest_framework.permissions import (IsAuthenticated)
+from rest_framework.generics import (ListAPIView,
+                                     RetrieveAPIView,
+                                     UpdateAPIView,
+                                     DestroyAPIView,
+                                     CreateAPIView)
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework.views import APIView
 
-from . models import Employees
-from . serlizers import EmployeesSerializer
+from api.models import Employees
+from api.serlizers import (EmployeesListSerializer,
+                           EmployeesDetailSerializer)
+from api.permissions import IsOwnerOrReadOnly
 
+
+#different view type for different REST calls
 class Employee(APIView):
     def get(self,request):
         employees=Employees.objects.all()
-        serializer=EmployeesSerializer(employees,many=True)
+        serializer=EmployeesListSerializer(employees,many=True)
         return Response(serializer.data)
 
-    def post(self,request):
-        pass
-    
+class EmployeeCreateAPIView(CreateAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeesListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class EmplyeeWithListAPIView(ListAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeesDetailSerializer
+
+class EmplyeeDetailAPIView(RetrieveAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeesListSerializer
+    lookup_field = 'pk' #pk can be changed to any of the field name
+
+class EmployeeUpdateAPIView(UpdateAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeesDetailSerializer
+    permission_classes = [IsOwnerOrReadOnly]
+
+    def perform_update(self, serializer):
+        serializer.save(self.request.user)
+
+class EmployeeDeleteAPIView(DestroyAPIView):
+    queryset = Employees.objects.all()
+    serializer_class = EmployeesDetailSerializer

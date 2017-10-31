@@ -1,6 +1,9 @@
-*.vscode
-*pyc
-basic_django/__pycache*
-api/migrations*
 webapp/migrations*
 login_system/migrations*
+/.vscode/
+/api/migrations/
+/.idea/
+/api/__pycache__/
+/basic_django/__pycache__/
+/login_system/__pycache__/
+/webapp/__pycache__/
